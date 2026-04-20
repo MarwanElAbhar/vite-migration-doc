@@ -174,33 +174,36 @@
     <tbody>
       <tr>
         <td>1</td>
-        <td><strong>Upgrade Jenkins Node.js version to 22</strong></td>
+        <td><strong>Upgrade Jenkins Node.js version</strong></td>
         <td>
-          Update the Node.js runtime used by Jenkins to <strong>version 22</strong> (LTS).<br><br>
-          Current version should be replaced in the Jenkins tool configuration or the relevant
+          Update the Node.js runtime used by Jenkins to a supported version.<br><br>
+          <strong>Minimum required: Node 20</strong> — specifically <code>v20.19.0+</code>, which ships with <strong>npm 10.8.2</strong>.<br><br>
+          <strong>Node 22</strong> "Jod" (LTS, Active) — <code>v22.12.0+</code> — is fully compatible and currently requested.<br>
+          <strong>Node 24</strong> "Krypton" (LTS, Active) — <code>v24.0.0+</code> — is also compatible and <strong>recommended</strong> for a longer support horizon.<br><br>
+          The current version should be replaced in the Jenkins tool configuration or the relevant
           <code>Dockerfile</code> / agent image.
         </td>
         <td>
-          Vite 7 requires a minimum of <strong>Node.js 22.12+</strong> on the Node 22 line
-          (latest: <strong>v22.22.2</strong>). Node 22 LTS ("Jod") satisfies this requirement and ensures
-          full compatibility with Vite's native ESM support, the <code>sass-embedded</code> compiler,
+          Vite 7 requires a minimum of <strong>Node.js 20.19.0+</strong>. Node 22 and Node 24 LTS both satisfy this
+          requirement and ensure full compatibility with Vite's native ESM support, the <code>sass-embedded</code> compiler,
           and all updated dependencies in <code>package.json</code>.
         </td>
       </tr>
       <tr>
         <td>2</td>
-        <td><strong>Upgrade npm to version 10 (or 11 for Node 24)</strong></td>
+        <td><strong>Ensure npm is up to date</strong></td>
         <td>
           npm is bundled automatically with Node.js — no separate installation is required.<br><br>
-          <strong>Node 22</strong> ships with <strong>npm 10.9.7</strong> (latest LTS <code>v22.22.2</code>).
-          <strong>Node 24</strong> ships with <strong>npm 11.12.1</strong> (latest LTS <code>v24.15.0</code>).<br><br>
+          <strong>Node 20</strong> (<code>v20.19.0+</code>) ships with <strong>npm 10.8.2</strong>.<br>
+          <strong>Node 22</strong> (<code>v22.22.2</code>) ships with <strong>npm 10.9.7</strong>.<br>
+          <strong>Node 24</strong> (<code>v24.15.0</code>) ships with <strong>npm 11.12.1</strong>.<br><br>
           Confirm the pipeline does not pin or downgrade npm via
           <code>npm install -g npm@&lt;version&gt;</code> in any pipeline stage.
         </td>
         <td>
           Vite 7 and its dependency tree require <strong>npm 7 or higher</strong> (lockfile v3).
-          npm bundled with Node 22 (npm 10.x) or Node 24 (npm 11.x) fully satisfies this requirement
-          and supports all workspace and peer-dependency resolution features used by the project.
+          npm bundled with Node 20 (npm 10.x), Node 22 (npm 10.x), or Node 24 (npm 11.x) fully satisfies
+          this requirement and supports all workspace and peer-dependency resolution features used by the project.
         </td>
       </tr>
       <tr>
@@ -230,7 +233,7 @@
     </tr>
     <tr>
       <td>Node.js engine requirement</td>
-      <td><code>&gt;=22.12.0</code> (from Vite 7 <code>package.json</code>)</td>
+      <td><code>^20.19.0 || &gt;=22.12.0</code> (from Vite 7 <code>package.json</code>)</td>
     </tr>
     <tr>
       <td>node-sass</td>
@@ -252,6 +255,13 @@
     </thead>
     <tbody>
       <tr>
+        <td><strong>Node 20</strong> "Iron"</td>
+        <td>LTS (Maintenance)</td>
+        <td>Yes — from 20.19.0+</td>
+        <td><code>v20.20.2</code></td>
+        <td><code>npm 10.8.2</code></td>
+      </tr>
+      <tr>
         <td><strong>Node 22</strong> "Jod" — <em>requested</em></td>
         <td>LTS (Active)</td>
         <td>Yes — from 22.12.0+</td>
@@ -270,7 +280,7 @@
 
   <div class="note-box">
     <strong>Source:</strong> Engine requirement taken directly from Vite 7's published <code>package.json</code>:
-    <code>"node": "&gt;=22.12.0"</code>. Node and npm versions sourced from the official
+    <code>"node": "^20.19.0 || &gt;=22.12.0"</code>. Node and npm versions sourced from the official
     Node.js release index (nodejs.org) as of April 2026.
     <strong>Node 22 or Node 24 LTS is recommended</strong> for production CI/CD.
   </div>
@@ -281,7 +291,7 @@
   <ul>
     <li>CI/CD builds will fail when the Vite migration branch is merged to staging/production.</li>
     <li><code>node-sass</code> does not support Node.js 18+ and will throw a native binding error.</li>
-    <li>Vite 7 requires Node.js 22.12+ — builds on older versions will error out at startup.</li>
+    <li>Vite 7 requires Node.js 20.19.0+ — builds on older versions will error out at startup.</li>
   </ul>
 
   <div class="note-box">
@@ -294,8 +304,8 @@
 
   <h2>Acceptance Criteria</h2>
   <ul>
-    <li>Jenkins pipeline runs with Node.js 22 (latest LTS <code>v22.22.2</code>) or Node.js 24 (latest LTS <code>v24.15.0</code>).</li>
-    <li>npm is automatically bundled with the chosen Node.js installation — npm 10.9.7 for Node 22, or npm 11.12.1 for Node 24. The pipeline does not pin or override the bundled npm version.</li>
+    <li>Jenkins pipeline runs with Node.js 20 (minimum <code>v20.19.0</code>), Node.js 22 (latest LTS <code>v22.22.2</code>), or Node.js 24 (latest LTS <code>v24.15.0</code>, recommended).</li>
+    <li>npm is automatically bundled with the chosen Node.js installation — npm 10.8.2 for Node 20, npm 10.9.7 for Node 22, or npm 11.12.1 for Node 24. The pipeline does not pin or override the bundled npm version.</li>
     <li>No <code>npm rebuild node-sass</code> step exists in any stage of the pipeline.</li>
     <li><code>npm install</code> and <code>npm run build</code> complete successfully on the Vite migration branch.</li>
   </ul>
